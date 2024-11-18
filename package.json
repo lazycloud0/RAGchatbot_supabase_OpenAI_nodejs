@@ -1,0 +1,22 @@
+{
+  "name": "ragchatbot_supabase_openai_nodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.46.1",
+    "dotenv": "^16.4.5",
+    "fs": "^0.0.1-security",
+    "langchain": "^0.3.6",
+    "openai": "^4.72.0"
+  }
+}

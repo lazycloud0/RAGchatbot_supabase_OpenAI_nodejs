@@ -28,6 +28,40 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 //const unstructured_api_key = process.env.UNSTRUCTURED_API_KEY;
 
 // Function to load all .mdx files
+async function loadAllMdxFiles(folderPath) {
+  console.log(`Reading files from folder: ${folderPath}`);
+  const mdxFiles = fs
+    .readdirSync(folderPath)
+    .filter((file) => file.endsWith(".mdx"));
+  console.log(`Found ${mdxFiles.length} MDX files.`);
+
+  const documents = new Set();
+  if (mdxFiles.length === 0) return [];
+
+  for (const file of mdxFiles) {
+    console.log(`Processing file: ${file}`);
+    const loader = new UnstructuredMarkdownLoader(path.join(folderPath, file), {
+      apiKey: process.env.UNSTRUCTURED_API_KEY, // Provide the API key here
+    });
+
+    try {
+      const loadedDocs = await loader.load();
+      console.log(`Loaded ${loadedDocs.length} documents from file: ${file}`);
+
+      loadedDocs.forEach((doc) => {
+        const docKey = JSON.stringify({
+          pageContent: doc.pageContent,
+          metadata: doc.metadata,
+        });
+        documents.add(docKey);
+      });
+    } catch (error) {
+      console.error(`Error loading file ${file}:`, error);
+    }
+  }
+
+  return Array.from(documents).map((docKey) => JSON.parse(docKey));
+}
 
 // Function to load all .pdf files
 async function loadAllPdfFiles(folderPath) {
@@ -72,7 +106,7 @@ async function loadAllTranscripts(folderPath) {
 async function createEmbeddings(docs) {
   try {
     const response = await openai.embeddings.create({
-      model: "text-embedding-ada-002",
+      model: "text-embedding-3-small",
       input: docs,
     });
 
